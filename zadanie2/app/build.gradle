@@ -1,0 +1,46 @@
+plugins {
+    id 'application'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    javafxVersion = '21.0.7'
+}
+
+dependencies {
+    // JavaFX dependencies
+    implementation "org.openjfx:javafx-controls:${javafxVersion}"
+    implementation "org.openjfx:javafx-graphics:${javafxVersion}"
+    implementation "org.openjfx:javafx-base:${javafxVersion}"
+    implementation "org.openjfx:javafx-fxml:${javafxVersion}"
+
+    // Test dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.8.1'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass = 'org.example.App'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+run {
+    // Update this path to the correct JavaFX SDK location
+    jvmArgs = [
+        "--module-path", "C:/javafx-sdk-21/lib",  // Adjust the path to your local JavaFX SDK lib folder
+        "--add-modules", "javafx.controls,javafx.fxml"
+    ]
+}
