@@ -70,19 +70,14 @@ public class PascalProcess {
         
                     if (line != null && !line.isEmpty()) {
                         String[] numbers = line.trim().split("\\s+");
-                        StringBuilder rowBuilder = new StringBuilder();
                     
                         for (String num : numbers) {
-                            rowBuilder.append(String.format("%4s", num)); // pad each number to width 4
+                            sb.append(String.format("%4s", num)); // fixed-width number spacing
                         }
                     
-                        int totalRowWidth = rowBuilder.length();
-                        int totalWidth = rows * 4; // rough estimate of max row width
-                        int padding = (totalWidth - totalRowWidth) / 2;
-                    
-                        sb.append(" ".repeat(Math.max(0, padding)));
-                        sb.append(rowBuilder.toString()).append("\n");
+                        sb.append("\n");
                     }
+                    
                     
                 }
         
