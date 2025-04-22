@@ -69,14 +69,9 @@ public class PascalProcess {
                     process.waitFor();
         
                     if (line != null && !line.isEmpty()) {
-                        String[] numbers = line.trim().split("\\s+");
-                    
-                        for (String num : numbers) {
-                            sb.append(String.format("%4s", num)); // fixed-width number spacing
-                        }
-                    
-                        sb.append("\n");
+                        sb.append(line.trim().replaceAll("\\s+", " ")).append("\n");
                     }
+                    
                     
                     
                 }
