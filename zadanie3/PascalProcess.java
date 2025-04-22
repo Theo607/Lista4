@@ -50,48 +50,44 @@ public class PascalProcess {
             String input = textField.getText();
             try {
                 int rows = Integer.parseInt(input.trim());
-
-                // Update with the path to your compiled C++ executable
+        
                 String executablePath = "./pascal"; // or "pascal.exe" on Windows
-
-                ProcessBuilder pb = new ProcessBuilder(executablePath, String.valueOf(rows));
-                pb.redirectErrorStream(true);
-                Process process = pb.start();
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line = reader.readLine(); // expecting a single line of output
-                process.waitFor();
-
+        
                 JTextArea textArea = new JTextArea(20, 40);
                 textArea.setFont(new Font("Monospaced", Font.PLAIN, 20));
                 textArea.setEditable(false);
-
-                if (line != null && !line.isEmpty()) {
-                    String[] parts = line.trim().split("\\s+");
-                    StringBuilder sb = new StringBuilder();
-                    int count = 0;
-                    for (int i = 0; i < parts.length; i++) {
-                        sb.append(parts[i]).append(" ");
-                        count++;
-                        if (count == i + 1) {
-                            sb.append("\n");
-                            count = 0;
-                        }
+        
+                StringBuilder sb = new StringBuilder();
+        
+                for (int i = 0; i < rows; i++) {
+                    ProcessBuilder pb = new ProcessBuilder(executablePath, String.valueOf(i + 1));
+                    pb.redirectErrorStream(true);
+                    Process process = pb.start();
+        
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line = reader.readLine(); // Expecting the line with the Pascal row
+                    process.waitFor();
+        
+                    // Format the row with indentation
+                    if (line != null && !line.isEmpty()) {
+                        int spaces = rows - i;
+                        sb.append(" ".repeat(spaces * 2)); // simple centering
+                        sb.append(line.trim()).append("\n");
                     }
-                    textArea.setText(sb.toString());
-                } else {
-                    textArea.setText("No output from process.");
                 }
-
+        
+                textArea.setText(sb.toString());
                 rightPanel.removeAll();
                 rightPanel.add(textArea);
                 rightPanel.revalidate();
                 rightPanel.repaint();
+        
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
         });
+        
 
         frame.setVisible(true);
     }
