@@ -68,12 +68,22 @@ public class PascalProcess {
                     String line = reader.readLine(); // Expecting the line with the Pascal row
                     process.waitFor();
         
-                    // Format the row with indentation
                     if (line != null && !line.isEmpty()) {
-                        int spaces = rows - i;
-                        sb.append(" ".repeat(spaces * 2)); // simple centering
-                        sb.append(line.trim()).append("\n");
+                        String[] numbers = line.trim().split("\\s+");
+                        StringBuilder rowBuilder = new StringBuilder();
+                    
+                        for (String num : numbers) {
+                            rowBuilder.append(String.format("%4s", num)); // pad each number to width 4
+                        }
+                    
+                        int totalRowWidth = rowBuilder.length();
+                        int totalWidth = rows * 4; // rough estimate of max row width
+                        int padding = (totalWidth - totalRowWidth) / 2;
+                    
+                        sb.append(" ".repeat(Math.max(0, padding)));
+                        sb.append(rowBuilder.toString()).append("\n");
                     }
+                    
                 }
         
                 textArea.setText(sb.toString());
