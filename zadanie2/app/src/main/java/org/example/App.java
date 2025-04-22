@@ -12,10 +12,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.control.TextField;
 import javafx.geometry.Pos;
-import javafx.geometry.Priority;
+import javafx.scene.layout.Priority;
+
 import javafx.stage.Stage;
 import javafx.scene.control.ScrollPane;
-
 
 class PascalTriangle {
     private int[][] triangle;
@@ -61,40 +61,30 @@ public class App extends Application {
         stage.setWidth(1280);
         stage.setHeight(720);
 
-        // Left Panel (for icon, input, and button)
         VBox leftPanel = new VBox(20);
         leftPanel.setAlignment(Pos.CENTER);
         Color backgroundColor = Color.rgb(250, 250, 250);
         leftPanel.setStyle("-fx-background-color: rgb(250, 250, 250);");
 
-        // Image icon
-        Image icon = new Image("file:pascal.png");
-        ImageView iconView = new ImageView(icon);
-        iconView.setFitWidth(400);
-        iconView.setFitHeight(400);
-
-        // Text field and button
         TextField textField = new TextField();
         textField.setText("Enter number of rows: ");
         textField.setFont(Font.font("Arial", 20));
         textField.setPrefWidth(300);
+        textField.setPrefHeight(50);
         Button button = new Button("Generate Triangle");
         button.setFont(Font.font("Arial", 20));
 
-        leftPanel.getChildren().addAll(iconView, textField, button);
+        leftPanel.getChildren().addAll(textField, button);
 
-        // Right Panel (for the triangle display)
         VBox rightPanel = new VBox(20);
         rightPanel.setAlignment(Pos.CENTER);
         rightPanel.setStyle("-fx-background-color: rgb(240, 240, 240);");
 
-        // ScrollPane for right panel
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(rightPanel);
         scrollPane.setFitToWidth(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
-        // Set up the split pane
         HBox splitPane = new HBox(leftPanel, scrollPane);
         splitPane.setHgrow(scrollPane, Priority.ALWAYS);
 
@@ -105,7 +95,7 @@ public class App extends Application {
             PascalTriangle pascalTriangle = new PascalTriangle(rows);
             int[][] triangle = pascalTriangle.getTriangle();
             TextArea textArea = new TextArea();
-            textArea.setFont(Font.font("Arial", 20));
+            textArea.setFont(Font.font("Arial", 40));
             textArea.setEditable(false);
 
             StringBuilder sb = new StringBuilder();
@@ -117,12 +107,10 @@ public class App extends Application {
             }
             textArea.setText(sb.toString());
 
-            // Update right panel with the new text area
             rightPanel.getChildren().clear();
             rightPanel.getChildren().add(textArea);
         });
 
-        // Set up scene and stage
         Scene scene = new Scene(splitPane);
         stage.setScene(scene);
         stage.show();
