@@ -1,122 +1,85 @@
 package org.example;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.control.TextField;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.layout.Priority;
-
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.scene.control.ScrollPane;
 
 class PascalTriangle {
-    private int[][] triangle;
-    private int rows;
+    private final int[][] triangle;
 
     public PascalTriangle(int rows) {
-        this.rows = rows;
         triangle = new int[rows][rows];
-        generateTriangle();
+        generate(rows);
     }
 
-    private void generateTriangle() {
+    private void generate(int rows) {
         for (int i = 0; i < rows; i++) {
-            triangle[i][0] = 1;
-            triangle[i][i] = 1;
+            triangle[i][0] = triangle[i][i] = 1;
             for (int j = 1; j < i; j++) {
                 triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
             }
         }
     }
 
-    public int[][] getTriangle() {
-        return triangle;
-    }
-
-    public int[] getRow(int row) {
-        return triangle[row];
-    }
-
-    public int getElement(int row, int col) {
+    public int get(int row, int col) {
         return triangle[row][col];
     }
 
-    public int getRows() {
-        return rows;
+    public int size() {
+        return triangle.length;
     }
 }
 
 public class App extends Application {
     @Override
-    public void start(Stage stage) {
-        stage.setTitle("Pascal's Triangle");
-        stage.setWidth(1280);
-        stage.setHeight(720);
+    public void start(Stage primaryStage) {
+        var args = getParameters().getRaw();
+        if (args.isEmpty()) {
+            System.out.println("Usage: gradlew run --args=\"<rows>\"");
+            return;
+        }
 
-        VBox leftPanel = new VBox(20);
-        leftPanel.setAlignment(Pos.CENTER);
-        Color backgroundColor = Color.rgb(250, 250, 250);
-        leftPanel.setStyle("-fx-background-color: rgb(250, 250, 250);");
+        int rows;
+        try {
+            rows = Integer.parseInt(args.get(0));
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number: " + args.get(0));
+            return;
+        }
 
-        TextField textField = new TextField();
-        textField.setText("Enter number of rows: ");
-        textField.setFont(Font.font("Arial", 20));
-        textField.setPrefWidth(300);
-        textField.setPrefHeight(50);
-        Button button = new Button("Generate Triangle");
-        button.setFont(Font.font("Arial", 20));
+        PascalTriangle triangle = new PascalTriangle(rows);
+        int cols = rows * 2;
 
-        leftPanel.getChildren().addAll(textField, button);
+        GridPane grid = new GridPane();
+        grid.setVgap(5);
+        grid.setHgap(-20);
+        grid.setAlignment(Pos.CENTER);
 
-        VBox rightPanel = new VBox(20);
-        rightPanel.setAlignment(Pos.CENTER);
-        rightPanel.setStyle("-fx-background-color: rgb(240, 240, 240);");
 
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(rightPanel);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
-        HBox splitPane = new HBox(leftPanel, scrollPane);
-        splitPane.setHgrow(scrollPane, Priority.ALWAYS);
-
-        // Button action to generate Pascal's Triangle
-        button.setOnAction(e -> {
-            String input = textField.getText();
-            int rows = Integer.parseInt(input);
-            PascalTriangle pascalTriangle = new PascalTriangle(rows);
-            int[][] triangle = pascalTriangle.getTriangle();
-            TextArea textArea = new TextArea();
-            textArea.setFont(Font.font("Arial", 40));
-            textArea.setEditable(false);
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j <= i; j++) {
-                    sb.append(triangle[i][j]).append(" ");
-                }
-                sb.append("\n");
+        for (int i = 0; i < rows; i++) {
+            int startCol = rows - i;
+            for (int j = 0; j <= i; j++) {
+                String text = String.valueOf(triangle.get(i, j));
+                Label label = new Label(text);
+                label.setFont(new Font(12));
+                label.setMinWidth(50);
+                grid.add(label, startCol + j * 2, i);
             }
-            textArea.setText(sb.toString());
+        }
 
-            rightPanel.getChildren().clear();
-            rightPanel.getChildren().add(textArea);
-        });
-
-        Scene scene = new Scene(splitPane);
-        stage.setScene(scene);
-        stage.show();
+        Scene scene = new Scene(grid, 600, 400);
+        primaryStage.setTitle("Pascal's Triangle");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }
